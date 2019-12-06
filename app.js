@@ -1,57 +1,20 @@
 var express = require("express");
 var bodyParser = require("body-parser");
 var app = express();
+var mongoose = require("mongoose");
 
+mongoose.set('useUnifiedTopology', true);
+mongoose.connect("mongodb://localhost/yelp_camp", { useNewUrlParser: true });
 app.use(bodyParser.urlencoded({ extended: true }));
 app.set("view engine", "ejs");
 
-var campgrounds = [
-    {
-        name: "Salmon Creek",
-        image:
-            "https://pixabay.com/get/50e9d4474856b108f5d084609620367d1c3ed9e04e50744e702d72dc9f48c7_340.jpg"
-    },
-    {
-        name: "Granite Hill",
-        image:
-            "https://pixabay.com/get/57e8d3444855a914f6da8c7dda793f7f1636dfe2564c704c722a79dd9f45c05a_340.jpg"
-    },
-    {
-        name: "Mountain Goats Bluff",
-        image:
-            "https://pixabay.com/get/57e1d14a4e52ae14f6da8c7dda793f7f1636dfe2564c704c722a79dd9f45c05a_340.jpg"
-    },
-    {
-        name: "Salmon Creek",
-        image:
-            "https://pixabay.com/get/50e9d4474856b108f5d084609620367d1c3ed9e04e50744e702d72dc9f48c7_340.jpg"
-    },
-    {
-        name: "Granite Hill",
-        image:
-            "https://pixabay.com/get/57e8d3444855a914f6da8c7dda793f7f1636dfe2564c704c722a79dd9f45c05a_340.jpg"
-    },
-    {
-        name: "Mountain Goats Bluff",
-        image:
-            "https://pixabay.com/get/57e1d14a4e52ae14f6da8c7dda793f7f1636dfe2564c704c722a79dd9f45c05a_340.jpg"
-    },
-    {
-        name: "Salmon Creek",
-        image:
-            "https://pixabay.com/get/50e9d4474856b108f5d084609620367d1c3ed9e04e50744e702d72dc9f48c7_340.jpg"
-    },
-    {
-        name: "Granite Hill",
-        image:
-            "https://pixabay.com/get/57e8d3444855a914f6da8c7dda793f7f1636dfe2564c704c722a79dd9f45c05a_340.jpg"
-    },
-    {
-        name: "Mountain Goats Bluff",
-        image:
-            "https://pixabay.com/get/57e1d14a4e52ae14f6da8c7dda793f7f1636dfe2564c704c722a79dd9f45c05a_340.jpg"
-    }
-];
+// Schema Setup
+var campgroundSchema = new mongoose.Schema({
+    name: String,
+    image: String
+});
+
+var Campground = mongoose.model("Campground", campgroundSchema);
 
 // ROUTES //
 app.get("/", function (req, res) {
@@ -59,7 +22,14 @@ app.get("/", function (req, res) {
 });
 
 app.get("/campgrounds", function (req, res) {
-    res.render("campgrounds", { campgrounds: campgrounds });
+    Campground.find({}, function (err, allCampgrounds) {
+        if (err) {
+            console.log("THERE WAS AN ERROR");
+            console.log(err);
+        } else {
+            res.render("campgrounds", { campgrounds: allCampgrounds });
+        }
+    });
 });
 
 app.post("/campgrounds", function (req, res) {
@@ -67,8 +37,14 @@ app.post("/campgrounds", function (req, res) {
     var name = req.body.name;
     var image = req.body.image;
     var newCampground = { name: name, image: image };
-    campgrounds.push(newCampground);
-    res.redirect("/campgrounds");
+    Campground.create(newCampground, function (err, newlyCreated) {
+        if (err) {
+            console.log(err);
+        } else {
+            res.redirect("/campgrounds");
+        }
+    });
+    // campgrounds.push(newCampground);
 });
 
 app.get("/campgrounds/new", function (req, res) {
