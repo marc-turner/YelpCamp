@@ -49,6 +49,8 @@ router.get("/:id", function (req, res) {
     });
 });
 
+
+// -- CAMPGROUND show edit form --
 router.get("/:id/edit", function (req, res) {
     Campground.findById(req.params.id, function (err, foundCampground) {
         if (err) {
@@ -59,12 +61,25 @@ router.get("/:id/edit", function (req, res) {
     });
 });
 
+
+//  -- CAMPGROUND edit campground logic --
 router.put("/:id", function (req, res) {
     Campground.findByIdAndUpdate(req.params.id, req.body.campground, function (err, updatedCampground) {
         if (err) {
             res.redirect("/campgrounds");
         } else {
             res.redirect("/campgrounds/" + req.params.id);
+        }
+    });
+});
+
+// CAMPGROUND delete
+router.delete("/:id", function (req, res) {
+    Campground.findByIdAndDelete(req.params.id, function (err) {
+        if (err) {
+            res.redirect("/campgrounds");
+        } else {
+            res.redirect("/campgrounds");
         }
     });
 });
