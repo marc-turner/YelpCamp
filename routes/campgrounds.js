@@ -44,9 +44,10 @@ router.get("/new", middleware.isLoggedIn, function (req, res) {
 //   -- CAMPGROUND Show --
 router.get("/:id", function (req, res) {
     Campground.findById(req.params.id).populate("comments").exec(function (err, foundCampground) {
-        if (err) {
+        if (err || !foundCampground) {
             req.flash("error", "There was a problem finding the campground");
-            console.log(err);
+            res.resdirect("back");
+            // console.log(err);
         } else {
             res.render("campgrounds/show", { campground: foundCampground, currentUser: req.user });
         }
@@ -56,9 +57,9 @@ router.get("/:id", function (req, res) {
 // -- CAMPGROUND show edit form --
 router.get("/:id/edit", middleware.checkCampgroundOwnership, function (req, res) {
     Campground.findById(req.params.id, function (err, foundCampground) {
-        if (err) {
+        if (err || !foundCampground) {
             req.flash("error", "There was a problem finding the campground");
-            console.log(err);
+            res.redirect("back");
         } else {
             res.render("campgrounds/edit.ejs", { campground: foundCampground });
         }
