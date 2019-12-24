@@ -13,3 +13,12 @@
 #delete-form{
     display: inline;
 }
+
+.yelp-form h1{
+    text-align: center;
+}
+
+.form-div{
+    width: 30%;
+    margin: 25px auto;
+}
