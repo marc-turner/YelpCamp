@@ -65,7 +65,7 @@ router.get("/:id", function (req, res) {
     });
 });
 
-// -- CAMPGROUND show edit form ---
+// -- CAMPGROUND show edit form --
 router.get("/:id/edit", middleware.checkCampgroundOwnership, function (req, res) {
     Campground.findById(req.params.id, function (err, foundCampground) {
         if (err || !foundCampground) {
