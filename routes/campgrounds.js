@@ -2,6 +2,16 @@ var express = require('express');
 var router = express.Router();
 var Campground = require("../models/campground");
 var middleware = require("../middleware");
+var NodeGeocoder = require('node-geocoder');
+
+var options = {
+    provider: 'google',
+    httpAdapter: 'https',
+    apiKey: process.env.GEOCODER_API_KEY,
+    formatter: null
+};
+
+var geocoder = NodeGeocoder(options);
 
 // -- CAMPGROUND Index ---
 router.get("/", function (req, res) {
@@ -55,7 +65,7 @@ router.get("/:id", function (req, res) {
     });
 });
 
-// -- CAMPGROUND show edit form --
+// -- CAMPGROUND show edit form ---
 router.get("/:id/edit", middleware.checkCampgroundOwnership, function (req, res) {
     Campground.findById(req.params.id, function (err, foundCampground) {
         if (err || !foundCampground) {
